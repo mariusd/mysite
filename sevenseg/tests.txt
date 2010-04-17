@@ -10,7 +10,7 @@ Index page has necessary control elements to enter and submit a number:
     >>> b.getForm().getControl(label="Show")
     <SubmitControl name=None type='submit'>
     
-Visitor can enter a number and get that its sevenseg representation:
+Visitor can enter a number and get its sevenseg representation:
 
     >>> b.getControl(name='number').value = "013942"
     >>> b.getForm().submit()
