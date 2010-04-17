@@ -1,0 +1,90 @@
+Sevenseg functional tests
+=========================
+
+Index page has necessary control elements to enter and submit a number:
+
+    >>> b = Browser()
+    >>> b.open('http://testserver/sevenseg')
+    >>> b.getControl(name='number').value
+    ''
+    >>> b.getForm().getControl(label="Show")
+    <SubmitControl name=None type='submit'>
+    
+Visitor can enter a number and get that its sevenseg representation:
+
+    >>> b.getControl(name='number').value = "013942"
+    >>> b.getForm().submit()
+    >>> print b.contents
+    <html>
+    ...
+    <pre> ###           ###    ###           ###
+    #   #      #      #  #   #  #   #      #
+    #   #      #      #  #   #  #   #      #
+    #   #      #      #  #   #  #   #      #
+                   ###    ###    ###    ###
+    #   #      #      #      #      #  #
+    #   #      #      #      #      #  #
+    #   #      #      #      #      #  #
+     ###           ###    ###           ### </pre>
+    ...
+    
+Given an empty or non-digit input, webpage shows an error message:
+
+    >>> b.goBack()
+    >>> b.getControl(name='number').value = ""
+    >>> b.getForm().submit()
+    >>> print b.contents
+    <html>
+    ...
+        <ul class="errorlist"><li>This field is required.</li></ul>
+    ...
+    >>> b.getControl(name='number').value = "456_789"
+    >>> b.getForm().submit()
+    >>> print b.contents
+    <html>
+    ...
+        <ul class="errorlist"><li>Enter a valid value.</li></ul>
+    ...
+    
+Webpage accepts only positive numbers:
+
+    >>> b.getControl(name='number').value = "-1"
+    >>> b.getForm().submit()
+    >>> print b.contents
+    <html>
+    ...
+        <ul class="errorlist"><li>Enter a valid value.</li></ul>
+    ...
+    
+After an incorrect value was submitted, it remains in the text field:
+
+    >>> b.getControl(name='number').value
+    '-1'
+    
+Whitespace in the begining or in the end of the input is ignored:
+
+    >>> b.goBack()
+    >>> b.getControl(name='number').value = " \t\n 42  \t  "
+    >>> b.getForm().submit()
+    >>> print b.contents
+    <html>
+    ...
+    <p>Number 42 in sevenseg format. Enjoy!</p>
+    <pre>        ###
+    #   #      #
+    #   #      #
+    #   #      #
+     ###    ###
+        #  #
+        #  #
+        #  #
+            ### </pre>
+    ...
+    >>> b.goBack()
+    >>> b.getControl(name='number').value = "4 2"
+    >>> b.getForm().submit()
+    >>> print b.contents
+    <html>
+    ...
+        <ul class="errorlist"><li>Enter a valid value.</li></ul>
+    ...

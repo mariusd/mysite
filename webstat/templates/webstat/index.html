@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>webstat</title>
+</head>
+<body>
+<h1>webstat</h1>
+<form action="" method="post">
+    {{ form.as_p }}
+    <input type="submit" value="Do webstat" />
+</form>
+{% if result %}
+    <h2>Result for {{ form.cleaned_data.url }}</h2>
+    <table border="1">
+    <tr><th>Key</th><th>Value</th></tr>
+    {% for key, val in result.items %}
+        <tr><td>{{ key }}</td><td>{{ val }}</td></tr>
+    {% endfor %}
+    </table>
+{% endif %}
+</body>
+</html>
+
